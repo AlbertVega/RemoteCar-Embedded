@@ -1,0 +1,4 @@
+yocto_image/poky-scarthgap-5.0/poky/rpi4/cache
+yocto_image/poky-scarthgap-5.0/poky/rpi4/sstate-cache
+yocto_image/poky-scarthgap-5.0/poky/rpi4/tmp
+yocto_image/poky-scarthgap-5.0/poky/rpi4/bitbake-cookerdaemon.log
