@@ -2,7 +2,13 @@
 
 ## Hardware
 
-## Imagen de Yocto
+## Imagen de Yocto y herramienta de Cross-toolchain
+*faltan modificaciones** 
+- Abrir terminal en yocto_image/poky-scarthgap-5.0/poky
+- Escribir comando `source oe-init-build-env rpi4`
+- Deshabilidar restricciones de AppArmor con el siguiente comando: `sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0`
+- Escribir comando `bitbake core-image-base`
+
 
 ## Flasheo de imagen
 
