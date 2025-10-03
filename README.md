@@ -1,4 +1,4 @@
-# Proyecto "RemoteCar-Embedded"
+<img width="707" height="131" alt="image" src="https://github.com/user-attachments/assets/da970534-5c4b-4c23-92ed-ac175122897a" /># Proyecto "RemoteCar-Embedded"
 
 ## Hardware
 
@@ -58,5 +58,38 @@ Y luego volver a ingresar el comando anterior del paso 2.
 <img width="819" height="127" alt="image" src="https://github.com/user-attachments/assets/f3014dfa-b146-4849-8610-93c3590a2704" />
 
 6. Una vez conectado es hora de configurar el wifi, para esto se utilizará la herramienta connmanctl. Entonces ingresar el comando `connmanctl ....`
-7. 
-
+7. A continuación, se verifica la habilitación de la conexión utilizando el comando:
+```
+enable wifi
+```
+El comando debería retornar el siguiente texto: 
+```
+Enabled wifi
+```
+8. Con la opción habilitada, se ingresa el comando para realizar un escaneo de la red wifi, el cual se da como:
+```
+scan wifi
+```
+Esperar hasta que aparezca en la terminal: 
+```
+Scan completed for wifi
+```
+9. Desplegar la lista de redes a las que se puede acceder, tras escribir `services` en la terminal. En la lista, se debería encontrar la red wifi a la que se desea conectar.
+10. Se activa la interacción de credenciales de Connman con:
+    ```
+    agent on
+    ```
+Sin este comando, puede fallar el registro a una red debido a que no tiene como interactuar con el usuario para solicitar la contraseña. 
+11.Acto seguido, se realiza la conexión a la red, con el comando: 
+```
+connect wifi_<codigo_red>
+```
+Nota: el código de red es el que se encuentra a la derecha, consecutivo a los nombres de las redes. Por ejemplo: 
+```
+Red_Personal              wifi_dcd645412fb_4g2hsdasdsmn_managed_psk
+```
+entonces, el comando de connect sería: 
+```
+connect wifi_dcd645412fb_4g2hsdasdsmn_managed_psk
+```
+11. Para verificar que la conexión ha sido exitosa, simplemente se volverá a emplear el comando `services`, y antes del nombre de la red, deberá aparecer las siglas `*AR` que significan que la red está lista, seleccionada y asociada al dispositivo. 
