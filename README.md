@@ -1,4 +1,4 @@
-<img width="707" height="131" alt="image" src="https://github.com/user-attachments/assets/da970534-5c4b-4c23-92ed-ac175122897a" /># Proyecto "RemoteCar-Embedded"
+# Proyecto "RemoteCar-Embedded"
 
 ## Hardware
 
