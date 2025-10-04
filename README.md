@@ -3,11 +3,35 @@
 ## Hardware
 
 ## Imagen de Yocto y herramienta de Cross-toolchain
-*faltan modificaciones** 
+A continuación se detallan los pasos a seguir para generar la imagen y la herramienta de Cross-toolchain.
 - Abrir terminal en yocto_image/poky-scarthgap-5.0/poky
-- Escribir comando `source oe-init-build-env rpi4`
-- Deshabilidar restricciones de AppArmor con el siguiente comando: `sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0`
-- Escribir comando `bitbake core-image-base`
+- Escribir comando para ajustar el entorno de la terminal.
+```
+source oe-init-build-env rpi4
+```
+- Deshabilidar restricciones de AppArmor para evitar problemas de compilación con el siguiente comando (tiene efecto hasta el siguiente reinicio):
+```
+sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+```
+Escribir el siguiente comando para generar la imagen de Yocto.
+```
+bitbake core-image-base
+```
+Cuando el proceso termine, la imagen será guardada en el siguiente directorio (importante asegurarse que es el archivo con extensión .wic):
+```
+\rpi4\tmp\deploy\images\core-image-base-raspberrypi4.rootfs-2025***.wic
+```
+Esta es la imágen que se flashea en la sd de la Raspberry Pi 4.
+
+Para generar la herramienta de cross-toolchain, se escribe el siguiente comando desde `\rpi4\`:
+```
+bitbake core-image-base -c populate_sdk
+```
+La herramienta se guardará en el siguiente directorio (asegurarse que sea el archivo .sh):
+```
+\rpi4\tmp\deploy\sdk\poky-glibc-x86_64-core-image-base-cortexa7t2hf-neon-vfpv4-raspberrypi4-toolchain-5.0.12.sh
+```
+Este archivo se ejecuta para instalar la herramienta en el host siguiendo los pasos que se le indica. Es recomendable utilizar el directorio de instalacion por defecto.
 
 
 ## Flasheo de imagen
