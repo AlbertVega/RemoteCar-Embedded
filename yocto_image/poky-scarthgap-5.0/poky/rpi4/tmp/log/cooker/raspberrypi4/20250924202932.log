@@ -1,2 +1,0 @@
-ERROR: Layer 'networking-layer' depends on layer 'meta-python', but this layer is not enabled in your configuration
-ERROR: Layer 'multimedia-layer' depends on layer 'meta-python', but this layer is not enabled in your configuration
