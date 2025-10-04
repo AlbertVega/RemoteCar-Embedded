@@ -1,0 +1,8 @@
+{
+  "/components/status": "app/components/status.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/login/page": "app/login/page.js",
+  "/control/page": "app/control/page.js",
+  "/register/page": "app/register/page.js",
+  "/page": "app/page.js"
+}
