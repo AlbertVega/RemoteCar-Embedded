@@ -1,5 +1,19 @@
 # Proyecto "RemoteCar-Embedded"
 
+## Clonar el repositorio
+
+Para obtener el código completo incluyendo los layers de Yocto:
+
+# Opción 1: Clone con submódulos (recomendado)
+```
+git clone --recursive https://github.com/AlbertVega/RemoteCar-Embedded.git
+```
+# Opción 2: Si ya clonaste sin --recursive
+```
+git submodule update --init --recursive
+```
+
+
 ## Hardware
 
 ## Imagen de Yocto y herramienta de Cross-toolchain
