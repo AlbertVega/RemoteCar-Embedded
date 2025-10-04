@@ -11,6 +11,8 @@ meta-*/
 buildtools/
 !meta-skeleton
 !meta-selftest
+!meta-openembedded
+!meta-raspberrypi
 hob-image-*.bb
 *.swp
 *.orig
