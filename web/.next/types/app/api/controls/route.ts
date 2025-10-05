@@ -1,4 +1,4 @@
-// File: /home/nico/Descargas/proyecto/web/app/api/controls/route.ts
+// File: /home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/web/app/api/controls/route.ts
 import * as entry from '../../../../../app/api/controls/route.js'
 import type { NextRequest } from 'next/server.js'
 

@@ -24,7 +24,7 @@ let carControls = {
 // --- ENDPOINTS ---
 // Probar conexión
 app.get("/api/status", (req, res) => {
-  res.json({ message: "Backend conectado correctamente" });
+  res.json({ message: "✅ Backend conectado correctamente" });
 });
 
 // Obtener controles actuales
@@ -35,7 +35,7 @@ app.get("/api/controls", (req, res) => {
 // Actualizar controles
 app.post("/api/controls", (req, res) => {
   carControls = { ...carControls, ...req.body };
-  res.json({ message: "Controles actualizados", controls: carControls });
+  res.json({ message: "✅ Controles actualizados", controls: carControls });
 });
 
 // Iniciar servidor

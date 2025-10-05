@@ -75,7 +75,7 @@ let GPIO: {
 };
 
 if (SIMULATION) {
-  console.log("Ejecutando en modo SIMULACIÓN (sin hardware)");
+  console.log("⚠️ Ejecutando en modo SIMULACIÓN (sin hardware)");
 
   GPIO = {
     init: () => console.log("GPIO simulado inicializado"),
@@ -85,7 +85,7 @@ if (SIMULATION) {
     setLights: async (state: LightsState) => console.log("Luces SIMULADAS → estado:", state),
   };
 } else {
-  console.log("Ejecutando en modo REAL (con hardware)");
+  console.log("✅ Ejecutando en modo REAL (con hardware)");
 
   const { Gpio } = require("onoff");
 

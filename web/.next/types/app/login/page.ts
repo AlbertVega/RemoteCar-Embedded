@@ -1,4 +1,4 @@
-// File: /home/nico/Descargas/proyecto/web/app/login/page.tsx
+// File: /home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/web/app/login/page.tsx
 import * as entry from '../../../../app/login/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

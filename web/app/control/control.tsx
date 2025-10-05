@@ -31,6 +31,9 @@ interface CarControls {
 
 // ================== COMPONENT ==================
 export default function Control() {
+  const [socket, setSocket] = useState<WebSocket | null>(null);//-------------------------------
+  const [messages, setMessages] = useState<string[]>([]);//-------------------------------
+
   const [controls, setControls] = useState<CarControls | null>(null)
   const [isConnected, setIsConnected] = useState(false)  
   const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set())
@@ -78,12 +81,32 @@ export default function Control() {
     )
   }
 
+  useEffect(() => {
+    // Use the Pi’s IP on your LAN instead of localhost
+    const ws = new WebSocket("ws://localhost:2027");
+
+    ws.onopen = () => console.log("✅ Connected to Pi server");
+    ws.onmessage = (msg) => setMessages((prev) => [...prev, msg.data]);
+    ws.onerror = (err) => console.error("❌ WebSocket error:", err);
+    
+    setSocket(ws);
+
+    return () => ws.close();
+  }, []);
+
+  const sendMessage = (mess: string) => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(mess);
+    }else{
+      console.log("ASdas");
+    }
+  };
+
   // Manejo de teclado
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase()
       setActiveKeys((prev) => new Set(prev).add(key))
-
       setControls((prev) => {
         if (!prev) return prev
         switch (key) {
@@ -206,8 +229,8 @@ export default function Control() {
                   </div>
                   <Slider
                     value={controls.speed}
-                    onChange={(value: number) =>
-                      setControls((prev) => prev && { ...prev, speed: value })
+                    onChange={(value: number) =>{setControls((prev) => prev && { ...prev, speed: value }); sendMessage("v".concat(value.toString()))}
+                      
                     }
                     max={100}
                     step={5}
@@ -238,8 +261,9 @@ export default function Control() {
                   <Button
                     variant={controls.lights.headlights ? "default" : "outline"}
                     size="sm"
-                    onClick={() => toggleLight("headlights")}
+                    onClick={() => {toggleLight("headlights"); sendMessage("ff")}}
                     className="flex flex-col items-center gap-1 text-xs p-2 h-auto"
+                    
                   >
                     <Sun className="w-3 h-3" />
                     <span>Faros</span>
@@ -247,7 +271,7 @@ export default function Control() {
                   <Button
                     variant={controls.lights.taillights ? "default" : "outline"}
                     size="sm"
-                    onClick={() => toggleLight("taillights")}
+                    onClick={() => {toggleLight("taillights"); sendMessage("ft");}}
                     className="flex flex-col items-center gap-1 text-xs p-2 h-auto"
                   >
                     <Moon className="w-3 h-3" />
@@ -256,7 +280,7 @@ export default function Control() {
                   <Button
                     variant={controls.lights.leftTurn ? "secondary" : "outline"}
                     size="sm"
-                    onClick={() => toggleLight("leftTurn")}
+                    onClick={() => {toggleLight("leftTurn"); sendMessage("fi");}}
                     className="flex flex-col items-center gap-1 text-xs p-2 h-auto"
                   >
                     <ArrowLeft className="w-3 h-3" />
@@ -265,7 +289,7 @@ export default function Control() {
                   <Button
                     variant={controls.lights.rightTurn ? "secondary" : "outline"}
                     size="sm"
-                    onClick={() => toggleLight("rightTurn")}
+                    onClick={() => {toggleLight("rightTurn"); sendMessage("fd");}}
                     className="flex flex-col items-center gap-1 text-xs p-2 h-auto"
                   >
                     <ArrowRight className="w-3 h-3" />
@@ -308,17 +332,21 @@ export default function Control() {
                 <div className="grid grid-cols-3 gap-1 max-w-48 mx-auto">
                   <div></div>
                   <div
+                    onClick={() => {sendMessage("d")}}
+
                     className={`p-2 rounded border text-center text-xs ${
                       activeKeys.has("w") || activeKeys.has("arrowup")
                         ? "bg-primary text-primary-foreground neon-glow"
                         : "bg-muted"
                     }`}
+                    style={{"cursor":""}}
                   >
                     <div className="font-bold">W / ↑</div>
                     <div>Adelante</div>
                   </div>
                   <div></div>
                   <div
+                    onClick={() => {sendMessage("z")}}
                     className={`p-2 rounded border text-center text-xs ${
                       activeKeys.has("a") || activeKeys.has("arrowleft")
                         ? "bg-primary text-primary-foreground neon-glow"
@@ -329,6 +357,7 @@ export default function Control() {
                     <div>Izquierda</div>
                   </div>
                   <div
+                    onClick={() => {sendMessage("t")}}
                     className={`p-2 rounded border text-center text-xs ${
                       activeKeys.has("s") || activeKeys.has("arrowdown")
                         ? "bg-primary text-primary-foreground neon-glow"
@@ -339,6 +368,7 @@ export default function Control() {
                     <div>Atrás</div>
                   </div>
                   <div
+                    onClick={() => {sendMessage("e")}}
                     className={`p-2 rounded border text-center text-xs ${
                       activeKeys.has("d") || activeKeys.has("arrowright")
                         ? "bg-primary text-primary-foreground neon-glow"
