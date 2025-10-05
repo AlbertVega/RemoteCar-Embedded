@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 2.6)
 
 
 #define the project
-project (libgpio)
+project (carcontrol)
 
 #add lib subdirectory to build
 add_subdirectory (lib)
@@ -17,12 +17,15 @@ include_directories(${PROJECT_SOURCE_DIR}/lib)
 
 # add the executable
 add_executable (gpio_test gpio_test.c)
+add_executable( control control.c)
 
 #link against required libraries
 target_link_libraries(gpio_test gpio)
+target_link_libraries(control gpio movement)
 
 #install the binary
 install (TARGETS gpio_test DESTINATION bin)
+install (TARGETS control DESTINATION bin)
 
 #package source generation
 set(MAJOR "1")
