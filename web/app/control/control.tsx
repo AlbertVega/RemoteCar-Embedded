@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import Card from "../components/ui/card"
 import Button from "../components/ui/button"
 import Badge from "../components/ui/badge"
@@ -35,8 +35,11 @@ export default function Control() {
   const [messages, setMessages] = useState<string[]>([]);//-------------------------------
 
   const [controls, setControls] = useState<CarControls | null>(null)
-  const [isConnected, setIsConnected] = useState(false)  
-  const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set())
+  const [isConnected, setIsConnected] = useState(false);
+  const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set());
+  const [currClicked, setCurrPressed] = useState("0");
+
+  const socketRef = useRef<WebSocket | null>(null);
 
   // === Cargar estado inicial desde backend ===
   useEffect(() => {
@@ -85,28 +88,63 @@ export default function Control() {
     // Use the Pi’s IP on your LAN instead of localhost
     const ws = new WebSocket("ws://localhost:2027");
 
-    ws.onopen = () => console.log("✅ Connected to Pi server");
+    ws.onopen = () => console.log("Connected to Pi server");
     ws.onmessage = (msg) => setMessages((prev) => [...prev, msg.data]);
-    ws.onerror = (err) => console.error("❌ WebSocket error:", err);
+    ws.onerror = (err) => console.error("WebSocket error:", err);
     
     setSocket(ws);
+    socketRef.current = ws;
 
     return () => ws.close();
   }, []);
 
   const sendMessage = (mess: string) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(mess);
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(mess);
     }else{
       console.log("ASdas");
     }
+  };
+
+  const keyPadPressed = (mess: string) =>{
+    console.log(mess);
+    setCurrPressed(mess);
+    sendMessage(mess);
+  };
+
+  const keyPadUnpressed = () =>{
+    setCurrPressed("0");
+    sendMessage("F");
   };
 
   // Manejo de teclado
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase()
-      setActiveKeys((prev) => new Set(prev).add(key))
+      setActiveKeys((prev) => new Set(prev).add(key));
+      if(currClicked == "0"){
+        let message = "";
+        if(key.length > 1){
+          switch(key[5]){
+            case "u":
+              message = "w";
+              break;
+            case "d":
+              message = "s";
+              break;
+            case "r":
+              message = "d";
+              break;
+            case "l":
+              message = "a";
+              break;
+          }
+        }else{
+          message = key;
+        }
+        keyPadPressed(message);
+      }
+      
       setControls((prev) => {
         if (!prev) return prev
         switch (key) {
@@ -135,7 +173,7 @@ export default function Control() {
         newSet.delete(key)
         return newSet
       })
-
+      keyPadUnpressed();
       setControls((prev) => {
         if (!prev) return prev
         switch (key) {
@@ -332,51 +370,54 @@ export default function Control() {
                 <div className="grid grid-cols-3 gap-1 max-w-48 mx-auto">
                   <div></div>
                   <div
-                    onClick={() => {sendMessage("d")}}
-
+                    onMouseDown={() => {keyPadPressed("w")}}
+                    onMouseUp={() => keyPadUnpressed()}
                     className={`p-2 rounded border text-center text-xs ${
-                      activeKeys.has("w") || activeKeys.has("arrowup")
+                      activeKeys.has("w") || activeKeys.has("arrowup") || currClicked == "w"
                         ? "bg-primary text-primary-foreground neon-glow"
                         : "bg-muted"
                     }`}
                     style={{"cursor":""}}
                   >
-                    <div className="font-bold">W / ↑</div>
-                    <div>Adelante</div>
+                    <div className="font-bold" style={{cursor:'default'}}>W / ↑</div>
+                    <div style={{cursor:'default'}}>Adelante</div>
                   </div>
                   <div></div>
                   <div
-                    onClick={() => {sendMessage("z")}}
+                    onMouseDown={() => {keyPadPressed("a")}}
+                    onMouseUp={() => keyPadUnpressed()}
                     className={`p-2 rounded border text-center text-xs ${
-                      activeKeys.has("a") || activeKeys.has("arrowleft")
+                      activeKeys.has("a") || activeKeys.has("arrowleft")  || currClicked == "a"
                         ? "bg-primary text-primary-foreground neon-glow"
                         : "bg-muted"
                     }`}
                   >
-                    <div className="font-bold">A / ←</div>
-                    <div>Izquierda</div>
+                    <div className="font-bold" style={{cursor:'default'}}>A / ←</div>
+                    <div style={{cursor:'default'}}>Izquierda</div>
                   </div>
                   <div
-                    onClick={() => {sendMessage("t")}}
+                    onMouseDown={() => {keyPadPressed("s")}}
+                    onMouseUp={() => keyPadUnpressed()}
                     className={`p-2 rounded border text-center text-xs ${
-                      activeKeys.has("s") || activeKeys.has("arrowdown")
+                      activeKeys.has("s") || activeKeys.has("arrowdown")  || currClicked == "s"
                         ? "bg-primary text-primary-foreground neon-glow"
                         : "bg-muted"
                     }`}
                   >
-                    <div className="font-bold">S / ↓</div>
-                    <div>Atrás</div>
+                    <div className="font-bold" style={{cursor:'default'}}>S / ↓</div>
+                    <div style={{cursor:'default'}}>Atrás</div>
                   </div>
                   <div
-                    onClick={() => {sendMessage("e")}}
+                    onMouseDown={() => {keyPadPressed("d")}}
+                    onMouseUp={() => keyPadUnpressed()}
                     className={`p-2 rounded border text-center text-xs ${
-                      activeKeys.has("d") || activeKeys.has("arrowright")
+                      activeKeys.has("d") || activeKeys.has("arrowright") || currClicked == "d"
                         ? "bg-primary text-primary-foreground neon-glow"
                         : "bg-muted"
                     }`}
                   >
-                    <div className="font-bold">D / →</div>
-                    <div>Derecha</div>
+                    <div className="font-bold" style={{cursor:'default'}}>D / →</div>
+                    <div style={{cursor:'default'}}>Derecha</div>
                   </div>
                 </div>
 

@@ -29,16 +29,19 @@ void executeCommand(char * message, int len){
         printf("Speed: %d\n", speed);
     }else{
         if (len == 1){//Direcciones simples
-            if(message[0] == 'd'){//Adelante
+            if(message[0] == 'F'){
+                printf("PARA\n");
+            }
+            if(message[0] == 'w'){//Adelante
                 printf("Adelante\n");
             }
-            if(message[0] == 't'){//Atrás
+            if(message[0] == 's'){//Atrás
                 printf("Atrás\n");
             }
-            if(message[0] == 'z'){//Izquierda
+            if(message[0] == 'a'){//Izquierda
                 printf("Izquierda\n");
             }
-            if(message[0] == 'e'){//Derecha
+            if(message[0] == 'd'){//Derecha
                 printf("Derecha\n");
             }
         }

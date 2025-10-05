@@ -10,7 +10,7 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
-                "-lweb"
+                "-lwebsockets"
             ],
             "options": {
                 "cwd": "${fileDirname}"
