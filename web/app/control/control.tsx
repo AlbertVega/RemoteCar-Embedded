@@ -41,17 +41,17 @@ export default function Control() {
   }, [])
 
   // === Enviar al backend ===
-  const sendControlsToBackend = useCallback(
-    async (newControls: CarControls) => {
-      if (!isConnected) return
-      try {
-        await updateControls(newControls)
-      } catch (error) {
-        console.error("Error enviando controles:", error)
-      }
-    },
-    [isConnected]
-  )
+
+const sendControlsToBackend = useCallback(
+  async (newControls: CarControls) => {
+    try {
+      await updateControls(newControls)
+    } catch (error) {
+      console.error("Error enviando controles:", error)
+    }
+  },
+  [] 
+)
 
   // === Hook que sincroniza cuando cambia el estado ===
   useEffect(() => {
@@ -143,221 +143,199 @@ export default function Control() {
   if (!controls) return <div className="p-4">Cargando controles...</div>
 
   // ================== UI ==================
-  return (
-    <div className="h-screen w-screen bg-background grid-bg p-2 overflow-hidden">
-      <div className="max-w-7xl mx-auto h-full">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Car className="w-6 h-6 text-primary neon-glow" />
-              <div>
-                <h1 className="text-xl font-bold text-primary">RACER CONTROL</h1>
-                <p className="text-xs text-muted-foreground">Sistema de Control Avanzado</p>
-              </div>
-            </div>
-            <Badge variant={isConnected ? "default" : "secondary"} className="px-2 py-1 text-xs">
-              {isConnected ? "🟢 CONECTADO" : "🔴 DESCONECTADO"}
-            </Badge>
+   return (
+  <div className="h-screen w-screen bg-background grid-bg p-2 overflow-hidden">
+    <div className="max-w-7xl mx-auto h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <Car className="w-6 h-6 text-primary neon-glow" />
+          <h1 className="text-xl font-bold text-primary">CONTROL</h1>
+          <Badge
+            variant={isConnected ? "default" : "secondary"}
+            className="px-2 py-1 text-xs"
+          >
+            {isConnected ? "🟢 CONECTADO" : "🔴 DESCONECTADO"}
+          </Badge>
+        </div>
+
+        {/* 🔧 Botón corregido (mismo color del fondo) */}
+        <Button
+          onClick={toggleConnection}
+          className={`px-3 py-1 border text-primary border-primary bg-background hover:opacity-80 transition 
+          ${isConnected ? "opacity-70" : ""}`}
+          size="sm"
+        >
+          <Power className="w-4 h-4 mr-1" />
+          {isConnected ? "DESCONECTAR" : "CONECTAR"}
+        </Button>
+      </div>
+
+      {/* Body */}
+      <div className="space-y-3 h-[calc(100vh-100px)]">
+        {/* Fila superior */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 h-[60%]">
+          {/* VIDEO MÁS ANCHO */}
+          <div className="lg:col-span-2">
+            <StreamViewer isConnected={isConnected} />
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={toggleConnection}
-              variant={isConnected ? "destructive" : "default"}
-              className="neon-glow px-3 py-1"
-              size="sm"
-            >
-              <Power className="w-4 h-4 mr-1" />
-              {isConnected ? "DESCONECTAR" : "CONECTAR"}
-            </Button>
+          {/* JOYSTICK Y VELOCIDAD EN COLUMNA */}
+          <div className="flex flex-col gap-3">
+            {/* JOYSTICK */}
+            <Card className="flex flex-col justify-center items-center border-none bg-transparent shadow-none h-1/2">
+              <div className="flex items-center gap-2 mb-2 self-start">
+                <Settings className="w-4 h-4 text-primary" />
+                <h3 className="text-sm font-semibold text-primary">JOYSTICK</h3>
+              </div>
+              <div className="flex flex-1 justify-center items-center">
+                <Joystick onMove={handleJoystickMove} />
+              </div>
+            </Card>
+
+            {/* VELOCIDAD */}
+            <Card className="flex flex-col justify-center items-center border-none bg-transparent shadow-none h-1/2">
+              <div className="flex items-center gap-2 mb-2 self-start">
+                <Gauge className="w-4 h-4 text-accent" />
+                <h3 className="text-sm font-semibold text-accent">VELOCIDAD</h3>
+              </div>
+              <div className="flex flex-col justify-center items-center flex-1 w-full">
+                <div className="text-center mb-2">
+                  <span className="text-lg font-bold text-accent">{controls.speed}</span>
+                  <span className="text-[10px] text-muted-foreground ml-1">km/h</span>
+                </div>
+                <Slider
+                  value={controls.speed}
+                  onChange={(value: number) =>
+                    setControls((prev) => prev && { ...prev, speed: value })
+                  }
+                  max={100}
+                  step={5}
+                  className="w-[80%]"
+                />
+              </div>
+            </Card>
           </div>
         </div>
 
-        <div className="space-y-3 h-[calc(100vh-100px)]">
-          {/* Primera fila: Stream y controles principales */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 h-[60%]">
-            {/* Stream Viewer */}
-            <div className="lg:col-span-2">
-              <StreamViewer isConnected={isConnected} />
+        {/* Fila inferior (luces + teclado) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 h-[35%]">
+          {/* LUCES */}
+          <Card className="p-2 border-none bg-transparent shadow-none">
+            <div className="flex items-center gap-2 mb-1">
+              <Lightbulb className="w-4 h-4 text-secondary" />
+              <h3 className="text-sm font-semibold text-secondary">LUCES</h3>
             </div>
+            <div className="space-y-1">
+              <div className="grid grid-cols-4 gap-1">
+                {[
+                  { key: "headlights", label: "Faros", icon: <Sun className="w-3 h-3" /> },
+                  { key: "taillights", label: "Traseras", icon: <Moon className="w-3 h-3" /> },
+                  { key: "leftTurn", label: "Izq", icon: <ArrowLeft className="w-3 h-3" /> },
+                  { key: "rightTurn", label: "Der", icon: <ArrowRight className="w-3 h-3" /> },
+                ].map(({ key, label, icon }) => (
+                  <Button
+                    key={key}
+                    size="sm"
+                    onClick={() => toggleLight(key as keyof CarControls["lights"])}
+                    className={`flex flex-col items-center gap-0.5 text-[10px] p-1 h-auto ${
+                      controls.lights[key as keyof CarControls["lights"]]
+                        ? "bg-primary text-primary-foreground neon-glow"
+                        : "bg-transparent border border-secondary/30"
+                    }`}
+                  >
+                    {icon}
+                    <span>{label}</span>
+                  </Button>
+                ))}
+              </div>
 
-            {/* Joystick */}
-            <div>
-              <Card className="p-3 border-primary/20 bg-card/50 backdrop-blur h-full">
-                <div className="flex items-center gap-2 mb-2">
-                  <Settings className="w-4 h-4 text-primary" />
-                  <h3 className="text-sm font-semibold text-primary">JOYSTICK</h3>
-                </div>
-                <Joystick onMove={handleJoystickMove} />
-              </Card>
+              <div className="flex justify-between text-[10px] gap-2">
+                <span
+                  className={`px-1 py-0.5 rounded flex-1 text-center ${
+                    controls.lights.brake
+                      ? "bg-destructive text-destructive-foreground"
+                      : "bg-transparent border border-destructive/20"
+                  }`}
+                >
+                  FRENO
+                </span>
+                <span
+                  className={`px-1 py-0.5 rounded flex-1 text-center ${
+                    controls.lights.reverse
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-transparent border border-accent/20"
+                  }`}
+                >
+                  REVERSA
+                </span>
+              </div>
             </div>
+          </Card>
 
-            {/* Control de Velocidad */}
-            <div>
-              <Card className="p-3 border-accent/20 bg-card/50 backdrop-blur h-full">
-                <div className="flex items-center gap-2 mb-2">
-                  <Gauge className="w-4 h-4 text-accent" />
-                  <h3 className="text-sm font-semibold text-accent">VELOCIDAD</h3>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-center">
-                    <span className="text-xl font-bold text-accent">{controls.speed}</span>
-                    <span className="text-xs text-muted-foreground ml-1">km/h</span>
-                  </div>
-                  <Slider
-                    value={controls.speed}
-                    onChange={(value: number) =>
-                      setControls((prev) => prev && { ...prev, speed: value })
-                    }
-                    max={100}
-                    step={5}
-                    className="w-full"
-                  />
-
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>0</span>
-                    <span>50</span>
-                    <span>100</span>
-                  </div>
-                </div>
-              </Card>
+          {/* CONTROLES DE TECLADO */}
+          <Card className="p-2 border-none bg-transparent shadow-none">
+            <div className="flex items-center gap-2 mb-1">
+              <Camera className="w-4 h-4 text-destructive" />
+              <h3 className="text-sm font-semibold text-destructive">CONTROLES DE TECLADO</h3>
             </div>
-          </div>
+            <div className="space-y-1">
+              <div className="grid grid-cols-3 gap-1 max-w-48 mx-auto">
+                <div></div>
+                <div
+                  className={`p-1 rounded border text-center text-[10px] ${
+                    activeKeys.has("w") || activeKeys.has("arrowup")
+                      ? "bg-primary text-primary-foreground neon-glow"
+                      : "bg-transparent"
+                  }`}
+                >
+                  <div className="font-bold text-[11px]">W / ↑</div>
+                  <div>Adelante</div>
+                </div>
+                <div></div>
 
-          {/* Segunda fila: Luces y Teclado */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 h-[35%]">
-            {/* Panel de Luces */}
-            <Card className="p-3 border-secondary/20 bg-card/50 backdrop-blur">
-              <div className="flex items-center gap-2 mb-2">
-                <Lightbulb className="w-4 h-4 text-secondary" />
-                <h3 className="text-sm font-semibold text-secondary">LUCES</h3>
-              </div>
-              <div className="space-y-2">
-                {/* Luces Principales */}
-                <div className="grid grid-cols-4 gap-1">
-                  <Button
-                    variant={controls.lights.headlights ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => toggleLight("headlights")}
-                    className="flex flex-col items-center gap-1 text-xs p-2 h-auto"
-                  >
-                    <Sun className="w-3 h-3" />
-                    <span>Faros</span>
-                  </Button>
-                  <Button
-                    variant={controls.lights.taillights ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => toggleLight("taillights")}
-                    className="flex flex-col items-center gap-1 text-xs p-2 h-auto"
-                  >
-                    <Moon className="w-3 h-3" />
-                    <span>Traseras</span>
-                  </Button>
-                  <Button
-                    variant={controls.lights.leftTurn ? "secondary" : "outline"}
-                    size="sm"
-                    onClick={() => toggleLight("leftTurn")}
-                    className="flex flex-col items-center gap-1 text-xs p-2 h-auto"
-                  >
-                    <ArrowLeft className="w-3 h-3" />
-                    <span>Izq</span>
-                  </Button>
-                  <Button
-                    variant={controls.lights.rightTurn ? "secondary" : "outline"}
-                    size="sm"
-                    onClick={() => toggleLight("rightTurn")}
-                    className="flex flex-col items-center gap-1 text-xs p-2 h-auto"
-                  >
-                    <ArrowRight className="w-3 h-3" />
-                    <span>Der</span>
-                  </Button>
+                <div
+                  className={`p-1 rounded border text-center text-[10px] ${
+                    activeKeys.has("a") || activeKeys.has("arrowleft")
+                      ? "bg-primary text-primary-foreground neon-glow"
+                      : "bg-transparent"
+                  }`}
+                >
+                  <div className="font-bold text-[11px]">A / ←</div>
+                  <div>Izquierda</div>
                 </div>
 
-                {/* Indicadores Automáticos */}
-                <div className="flex justify-between text-xs gap-2">
-                  <span
-                    className={`px-2 py-1 rounded flex-1 text-center ${
-                      controls.lights.brake
-                        ? "bg-destructive text-destructive-foreground"
-                        : "bg-muted"
-                    }`}
-                  >
-                    FRENO
-                  </span>
-                  <span
-                    className={`px-2 py-1 rounded flex-1 text-center ${
-                      controls.lights.reverse
-                        ? "bg-accent text-accent-foreground"
-                        : "bg-muted"
-                    }`}
-                  >
-                    REVERSA
-                  </span>
-                </div>
-              </div>
-            </Card>
-
-            {/* Controles de Teclado */}
-            <Card className="p-3 border-destructive/20 bg-card/50 backdrop-blur">
-              <div className="flex items-center gap-2 mb-2">
-                <Camera className="w-4 h-4 text-destructive" />
-                <h3 className="text-sm font-semibold text-destructive">CONTROLES DE TECLADO</h3>
-              </div>
-              <div className="space-y-2">
-                {/* Controles de Movimiento en cruz */}
-                <div className="grid grid-cols-3 gap-1 max-w-48 mx-auto">
-                  <div></div>
-                  <div
-                    className={`p-2 rounded border text-center text-xs ${
-                      activeKeys.has("w") || activeKeys.has("arrowup")
-                        ? "bg-primary text-primary-foreground neon-glow"
-                        : "bg-muted"
-                    }`}
-                  >
-                    <div className="font-bold">W / ↑</div>
-                    <div>Adelante</div>
-                  </div>
-                  <div></div>
-                  <div
-                    className={`p-2 rounded border text-center text-xs ${
-                      activeKeys.has("a") || activeKeys.has("arrowleft")
-                        ? "bg-primary text-primary-foreground neon-glow"
-                        : "bg-muted"
-                    }`}
-                  >
-                    <div className="font-bold">A / ←</div>
-                    <div>Izquierda</div>
-                  </div>
-                  <div
-                    className={`p-2 rounded border text-center text-xs ${
-                      activeKeys.has("s") || activeKeys.has("arrowdown")
-                        ? "bg-primary text-primary-foreground neon-glow"
-                        : "bg-muted"
-                    }`}
-                  >
-                    <div className="font-bold">S / ↓</div>
-                    <div>Atrás</div>
-                  </div>
-                  <div
-                    className={`p-2 rounded border text-center text-xs ${
-                      activeKeys.has("d") || activeKeys.has("arrowright")
-                        ? "bg-primary text-primary-foreground neon-glow"
-                        : "bg-muted"
-                    }`}
-                  >
-                    <div className="font-bold">D / →</div>
-                    <div>Derecha</div>
-                  </div>
+                <div
+                  className={`p-1 rounded border text-center text-[10px] ${
+                    activeKeys.has("s") || activeKeys.has("arrowdown")
+                      ? "bg-primary text-primary-foreground neon-glow"
+                      : "bg-transparent"
+                  }`}
+                >
+                  <div className="font-bold text-[11px]">S / ↓</div>
+                  <div>Atrás</div>
                 </div>
 
-                <div className="text-center text-xs text-muted-foreground">
-                  WASD o flechas para mover
+                <div
+                  className={`p-1 rounded border text-center text-[10px] ${
+                    activeKeys.has("d") || activeKeys.has("arrowright")
+                      ? "bg-primary text-primary-foreground neon-glow"
+                      : "bg-transparent"
+                  }`}
+                >
+                  <div className="font-bold text-[11px]">D / →</div>
+                  <div>Derecha</div>
                 </div>
               </div>
-            </Card>
-          </div>
+
+              <div className="text-center text-[10px] text-muted-foreground">
+                WASD o flechas para mover
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>
-  )
+  </div>
+)
 }
