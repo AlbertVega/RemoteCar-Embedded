@@ -115,7 +115,7 @@ static struct lws_protocols protocols[] = {
 };
 
 /* PC
-gst-launch-1.0 udpsrc port=5000 caps="application/x-rtp, media=video, encoding-name=JPEG, payload=26" ! rtpjpegdepay ! jpegdec ! autovideosink
+gst-launch-1.0 udpsrc port=8080 caps="application/x-rtp, media=video, encoding-name=JPEG, payload=26" ! rtpjpegdepay ! jpegdec ! autovideosink
 
 
 
@@ -126,14 +126,7 @@ gst-launch-1.0 udpsrc port=5000 caps="application/x-rtp, media=video, encoding-n
 gst-launch-1.0 v4l2src device=/dev/video0 ! \
     image/jpeg,width=640,height=480,framerate=30/1 ! \
     rtpjpegpay ! \
-    udpsink host=192.168.18.22 port=5000
-
-    # On Raspberry Pi
-
-    gst-launch-1.0 v4l2src device=/dev/video0 ! \
-    videoconvert ! jpegenc ! multipartmux ! \
-    host=0.0.0.0 port=8080
-
+    udpsink port=8080
 
 */
 
@@ -141,7 +134,7 @@ void *streamCamera(void *arg){
     system("gst-launch-1.0 v4l2src device=/dev/video0 ! \
     image/jpeg,width=640,height=480,framerate=30/1 ! \
     rtpjpegpay ! \
-    udpsink host=192.168.18.22 port=5000");
+    udpsink host=192.168.18.22 port=8080");
 }
 
 int main(void) {

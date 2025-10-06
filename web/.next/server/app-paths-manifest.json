@@ -1,4 +1,6 @@
 {
   "/api/controls/route": "app/api/controls/route.js",
-  "/control/page": "app/control/page.js"
+  "/control/page": "app/control/page.js",
+  "/login/page": "app/login/page.js",
+  "/register/page": "app/register/page.js"
 }

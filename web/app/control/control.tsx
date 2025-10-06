@@ -98,6 +98,17 @@ export default function Control() {
     return () => ws.close();
   }, []);
 
+  const startStream = () =>{
+    const ws = new WebSocket("ws://localhost:2025");
+    ws.onopen = () => console.log("Connected to Pi server");
+    ws.onmessage = (msg) => setMessages((prev) => [...prev, msg.data]);
+    ws.onerror = (err) => console.error("WebSocket error:", err);
+
+    if(ws && ws.readyState === WebSocket.OPEN){
+      ws.send("a");
+    }
+  }
+
   const sendMessage = (mess: string) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(mess);
@@ -223,7 +234,7 @@ export default function Control() {
 
           <div className="flex items-center gap-2">
             <Button
-              onClick={toggleConnection}
+              onClick={() => {toggleConnection(); startStream()}}
               variant={isConnected ? "destructive" : "default"}
               className="neon-glow px-3 py-1"
               size="sm"
