@@ -35,11 +35,24 @@ int move_forward();
 // Move backward
 int move_backward();
 
+// Move with PWM
+int move_forward_pwm(int percentaje);
+int move_backward_pwm(int percentaje);
+
 // Move to the left (power on left leds)
 int move_left();
+int move_left_and_go(int percentaje);
 
 // Move to the right (power on right leds)
 int move_right();
+int move_right_and_go(int percentaje);
+
+// Blink left lights
+int blink_left_lights();
+
+// Blink right lights
+int blink_right_lights();
+
 
 // Stop movement
 int stop();

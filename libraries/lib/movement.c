@@ -19,6 +19,17 @@ GPIOPin* motor_EN;
 // Global flag to stop all blink threads
 volatile int stop_blink_flag = 0;
 
+// Global flag to stop PWM
+volatile int stop_pwm_flag = 0;
+
+// Structure for PWM parameters
+typedef struct {
+    GPIOPin* gpio;
+    float duty_cycle;  // 0.0 a 1.0 (0% a 100%)
+    int period_ms;     // Período en millisegundos
+} pwm_params_t;
+
+
 // Structure for passing blink parameters to thread
 typedef struct {
     GPIOPin* gpio;
@@ -203,14 +214,114 @@ void* blink_thread(void* arg) {
 }
 
 
+// PWM continuous function (runs until stopped)
+void* continuous_pwm(void* arg) {
+    pwm_params_t* params = (pwm_params_t*)arg;
+    
+    int on_time_ms = (int)(params->period_ms * params->duty_cycle);
+    int off_time_ms = params->period_ms - on_time_ms;
+    
+    while (!stop_pwm_flag) {
+        // Turn ON
+        digitalWrite(params->gpio, HIGH);
+        
+        for (int i = 0; i < on_time_ms && !stop_pwm_flag; i += 5) {
+            usleep(5000);  // 5ms chunks
+        }
+        
+        if (stop_pwm_flag) break;
+        
+        // Turn OFF
+        digitalWrite(params->gpio, LOW);
+        
+        for (int i = 0; i < off_time_ms && !stop_pwm_flag; i += 5) {
+            usleep(5000);  // 5ms chunks
+        }
+    }
+    
+    digitalWrite(params->gpio, LOW);
+    free(params); 
+    return NULL;
+}
+
+// Start continuous PWM (non-blocking)
+int start_pwm(GPIOPin* gpio, int percentage) {
+    if (percentage < 0 || percentage > 100) {
+        return GPIO_ERROR_INVALID_DURATION;
+    }
+    
+    // Stop any previous PWM
+    stop_pwm_flag = 1;
+    usleep(50000);  // Wait 50ms for cleanup
+    stop_pwm_flag = 0;
+    
+    // Create PWM parameters
+    pwm_params_t* params = malloc(sizeof(pwm_params_t));
+    params->gpio = gpio;
+    params->duty_cycle = percentage / 100.0;
+    params->period_ms = 20;  
+    
+    // Start PWM thread
+    pthread_t pwm_thread_id;
+    pthread_create(&pwm_thread_id, NULL, continuous_pwm, params);
+    pthread_detach(pwm_thread_id);  
+    
+    return GPIO_SUCCESS;
+}
+
+int move_forward_pwm(int percentaje) {
+    if (percentaje < 0 || percentaje > 100) return GPIO_ERROR_INVALID_DURATION;
+    float duty_cycle = percentaje / 100.0;
+    return start_pwm(motor_IN2, percentaje);
+}
+
 // Move forward
 int move_forward() {
     return digitalWrite(motor_IN2, HIGH);
 }
 
+int move_backward_pwm(int percentaje) {
+    if (percentaje < 0 || percentaje > 100) return GPIO_ERROR_INVALID_DURATION;
+    float duty_cycle = percentaje / 100.0;
+    return start_pwm(motor_IN1, percentaje);
+}
+
 // Move backward
 int move_backward() {
     return digitalWrite(motor_IN1, HIGH);
+}
+
+// Move to the left (power on left leds)
+int move_left_and_go(int percentaje) {
+    // Reset stop flag to allow new blinks
+    stop_blink_flag = 0;
+    
+    // Start motor immediately
+    int motor_result = digitalWrite(motor_IN4, HIGH);
+
+    // Start moving car
+    move_forward_pwm(percentaje);
+    
+    // Start LEDs blink in separate thread (non-blocking)
+    pthread_t blink_thread_id1;
+    blink_params_t* params = malloc(sizeof(blink_params_t));
+    params->gpio = left_led1;
+    params->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
+    params->duration = 4.0;  // Durante 4 segundos
+
+    pthread_t blink_thread_id2;
+    blink_params_t* params2 = malloc(sizeof(blink_params_t));
+    params2->gpio = left_led2;
+    params2->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
+    params2->duration = 4.0;  // Durante 4 segundos
+
+    pthread_create(&blink_thread_id1, NULL, blink_thread, params);
+    pthread_detach(blink_thread_id1);  // No necesitamos esperar al thread
+
+    pthread_create(&blink_thread_id2, NULL, blink_thread, params2);
+    pthread_detach(blink_thread_id2);  // No necesitamos esperar al thread
+    
+    return motor_result;
 }
 
 // Move to the left (power on left leds)
@@ -240,6 +351,38 @@ int move_left() {
     pthread_create(&blink_thread_id2, NULL, blink_thread, params2);
     pthread_detach(blink_thread_id2);  // No necesitamos esperar al thread
     
+    return motor_result;
+}
+
+int move_right_and_go(int percentaje) {
+    // Reset stop flag to allow new blinks
+    stop_blink_flag = 0;
+    
+    // Start motor immediately
+    int motor_result = digitalWrite(motor_IN3, HIGH);
+
+    // Start moving car
+    move_forward_pwm(percentaje);
+    
+    // Start LEDs blink in separate thread (non-blocking)
+    pthread_t blink_thread_id1;
+    blink_params_t* params = malloc(sizeof(blink_params_t));
+    params->gpio = right_led1;
+    params->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
+    params->duration = 4.0;  // Durante 4 segundos
+
+    pthread_t blink_thread_id2;
+    blink_params_t* params2 = malloc(sizeof(blink_params_t));
+    params2->gpio = right_led2;
+    params2->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
+    params2->duration = 4.0;  // Durante 4 segundos
+
+    pthread_create(&blink_thread_id1, NULL, blink_thread, params);
+    pthread_detach(blink_thread_id1);  // No necesitamos esperar al thread
+
+    pthread_create(&blink_thread_id2, NULL, blink_thread, params2);
+    pthread_detach(blink_thread_id2);  // No necesitamos esperar al thread
+
     return motor_result;
 }
 
@@ -273,6 +416,59 @@ int move_right() {
     return motor_result;
 }
 
+// Turn on right lights
+int blink_right_lights() {
+    // Reset stop flag to allow new blinks
+    stop_blink_flag = 0;
+
+    // Start LEDs blink in separate thread (non-blocking)
+    pthread_t blink_thread_id1;
+    blink_params_t* params = malloc(sizeof(blink_params_t));
+    params->gpio = right_led1;
+    params->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
+    params->duration = 4.0;  // Durante 4 segundos
+
+    pthread_t blink_thread_id2;
+    blink_params_t* params2 = malloc(sizeof(blink_params_t));
+    params2->gpio = right_led2;
+    params2->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
+    params2->duration = 4.0;  // Durante 4 segundos
+
+    pthread_create(&blink_thread_id1, NULL, blink_thread, params);
+    pthread_detach(blink_thread_id1);  // No necesitamos esperar al thread
+
+    pthread_create(&blink_thread_id2, NULL, blink_thread, params2);
+    pthread_detach(blink_thread_id2);  // No necesitamos esperar al thread
+
+    return 0;
+}
+
+// Turn on left lights
+int blink_left_lights() {
+    // Reset stop flag to allow new blinks
+    stop_blink_flag = 0;
+
+    // Start LEDs blink in separate thread (non-blocking)
+    pthread_t blink_thread_id1;
+    blink_params_t* params = malloc(sizeof(blink_params_t));
+    params->gpio = left_led1;
+    params->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
+    params->duration = 4.0;  // Durante 4 segundos
+
+    pthread_t blink_thread_id2;
+    blink_params_t* params2 = malloc(sizeof(blink_params_t));
+    params2->gpio = left_led2;
+    params2->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
+    params2->duration = 4.0;  // Durante 4 segundos
+
+    pthread_create(&blink_thread_id1, NULL, blink_thread, params);
+    pthread_detach(blink_thread_id1);  // No necesitamos esperar al thread
+
+    pthread_create(&blink_thread_id2, NULL, blink_thread, params2);
+    pthread_detach(blink_thread_id2);  // No necesitamos esperar al thread
+
+    return 0;
+}
 
 // Stop everything
 int stop() {
