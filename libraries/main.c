@@ -2,6 +2,7 @@
 #include <string.h>
 #include <movement.h>
 
+
 /**
  * @brief Dirección del carro. 
  * F: Está quieto
@@ -15,14 +16,7 @@ char * currDirection;
  * @brief Velocidad del carro. 0 - 100
  */
 int * currSpeed;
-/**
- * @brief Arreglo con el estado de las cuatro luces.
- * 0: Frontal derecha
- * 1: Frontal izquierda
- * 2: Trasera derecha
- * 3: Trasera izquierda 
- */
-int * lightsState; 
+
 
 /***
  * @brief Retorna la velocidad como entero
@@ -83,18 +77,7 @@ void processCommand(char * message, int len){
             }
         }
         if(len == 2){//Faros
-            if(message[1] == 'f'){//Frontal
-                
-            }
-            if(message[1] == 't'){//Traseros
-                printf("Faro Traseros\n");
-            }
-            if(message[1] == 'i'){//Izquierda
-                printf("Faro Izquierda\n");
-            }
-            if(message[1] == 'd'){//Derecha
-                printf("Faro Derecha\n");
-            }
+            changeLightState(message);
         }
     }
     
@@ -136,10 +119,7 @@ int main(void) {
     *currDirection = 'F';
     currSpeed = (int *)malloc(sizeof(int));
     *currSpeed = 0;
-    lightsState = (int *)malloc(sizeof(int)*4);
-    for(int i = 0; i < 4; i++){
-        lightsState[i] = 0;
-    }
+    
     // ---------------------------
     struct lws_context_creation_info info;
     memset(&info, 0, sizeof(info));
@@ -163,6 +143,6 @@ int main(void) {
     lws_context_destroy(context);
     free(currDirection);
     free(currSpeed);
-    free(lightsState);
+    freeThemAll();
     return 0;
 }

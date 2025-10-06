@@ -26,6 +26,13 @@ typedef struct {
     float duration;
 } blink_params_t;
 
+/**
+ * @brief Arreglo con el estado de las cuatro luces.
+ * 0: Frontales
+ * 1: Traseras
+ */
+int * lightsState; 
+
 // Configuration with different pins
 int setup(int pin_in3, int pin_in4, int left_pin_led1, int right_pin_led1, int left_pin_led2, int right_pin_led2, int pin_in1, int pin_in2, int pin_en) {
     // Change pin assignments
@@ -122,7 +129,10 @@ int setup(int pin_in3, int pin_in4, int left_pin_led1, int right_pin_led1, int l
     } else {
         printf("Motor EN (pin %d): Error de configuración\n", PIN_EN);
     }
-
+    lightsState = (int *)malloc(sizeof(int)*2);
+    for(int i = 0; i < 2; i++){
+        lightsState[i] = 0;
+    }
     // Verify initialization
     if( motor_IN3->fd_line < 0 || motor_IN4->fd_line < 0 ||
         left_led1->fd_line < 0 || right_led1->fd_line < 0 ||
@@ -131,18 +141,12 @@ int setup(int pin_in3, int pin_in4, int left_pin_led1, int right_pin_led1, int l
         printf("\nError: Uno o más GPIOs no se configuraron correctamente\n");
         
         // Clean up allocated memory on failure
-        free(motor_IN3);
-        free(motor_IN4);
-        free(left_led1);
-        free(right_led1);
-        free(left_led2);
-        free(right_led2);
-        free(motor_IN1);
-        free(motor_IN2);
-        free(motor_EN);
-
+        freeThemAll();
+        
         return GPIO_ERROR_INVALID_PIN;
     }
+
+    
 
     printf("\nTodos los GPIOs configurados exitosamente\n");
 
@@ -155,6 +159,8 @@ int setup(int pin_in3, int pin_in4, int left_pin_led1, int right_pin_led1, int l
     return GPIO_SUCCESS;
 
 }
+
+
 
 // Configuration with default pins
 int setup_defaults() {
@@ -198,6 +204,7 @@ void* interruptible_blink(GPIOPin* gpio, float freq, float duration) {
 void* blink_thread(void* arg) {
     blink_params_t* params = (blink_params_t*)arg;
     interruptible_blink(params->gpio, params->freq, params->duration);
+    lightsBackTogether();
     free(params);  // Clean up allocated memory
     return NULL;
 }
@@ -221,24 +228,8 @@ int move_left() {
     // Start motor immediately
     int motor_result = digitalWrite(motor_IN4, HIGH);
     
-    // Start LEDs blink in separate thread (non-blocking)
-    pthread_t blink_thread_id1;
-    blink_params_t* params = malloc(sizeof(blink_params_t));
-    params->gpio = left_led1;
-    params->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
-    params->duration = 4.0;  // Durante 4 segundos
-
-    pthread_t blink_thread_id2;
-    blink_params_t* params2 = malloc(sizeof(blink_params_t));
-    params2->gpio = left_led2;
-    params2->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
-    params2->duration = 4.0;  // Durante 4 segundos
-
-    pthread_create(&blink_thread_id1, NULL, blink_thread, params);
-    pthread_detach(blink_thread_id1);  // No necesitamos esperar al thread
-
-    pthread_create(&blink_thread_id2, NULL, blink_thread, params2);
-    pthread_detach(blink_thread_id2);  // No necesitamos esperar al thread
+    blinkIt(left_led1, 0.5, 4.0);
+    blinkIt(left_led2, 0.5, 4.0);
     
     return motor_result;
 }
@@ -251,24 +242,8 @@ int move_right() {
     // Start motor immediately
     int motor_result = digitalWrite(motor_IN3, HIGH);
     
-    // Start LEDs blink in separate thread (non-blocking)
-    pthread_t blink_thread_id1;
-    blink_params_t* params = malloc(sizeof(blink_params_t));
-    params->gpio = right_led1;
-    params->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
-    params->duration = 4.0;  // Durante 4 segundos
-
-    pthread_t blink_thread_id2;
-    blink_params_t* params2 = malloc(sizeof(blink_params_t));
-    params2->gpio = right_led2;
-    params2->freq = 0.5;  // 0.5 Hz = blink cada 1 segundos
-    params2->duration = 4.0;  // Durante 4 segundos
-
-    pthread_create(&blink_thread_id1, NULL, blink_thread, params);
-    pthread_detach(blink_thread_id1);  // No necesitamos esperar al thread
-
-    pthread_create(&blink_thread_id2, NULL, blink_thread, params2);
-    pthread_detach(blink_thread_id2);  // No necesitamos esperar al thread
+    blinkIt(right_led1, 0.5, 4.0);
+    blinkIt(right_led2, 0.5, 4.0);
 
     return motor_result;
 }
@@ -292,4 +267,64 @@ int stop() {
     stop_blink_flag = 0;
     
     return result;
+}
+
+/**
+ * @brief Cambia a las luces
+ * @param lights mensaje de las luces
+ */
+void changeLightState(char* lights){
+    if(lights[1] == 'f'){//Frontal
+        lightsState[0] = !lightsState[0];
+        turnLedOnOff(left_led1, lightsState[0]);
+        turnLedOnOff(right_led1, lightsState[0]);
+    }
+    if(lights[1] == 't'){//Traseros
+        lightsState[1] = !lightsState[1];
+        turnLedOnOff(left_led2, lightsState[1]);
+        turnLedOnOff(right_led2, lightsState[1]);
+    }
+    if(lights[1] == 'i'){//Izquierda
+        blinkIt(left_led1, 2, 3);
+        blinkIt(left_led2, 2, 3);
+    }
+    if(lights[1] == 'd'){//Derecha
+        blinkIt(right_led1, 2, 3);
+        blinkIt(right_led2, 2, 3);
+    }
+}
+
+void freeThemAll(){
+    free(motor_IN3);
+    free(motor_IN4);
+    free(left_led1);
+    free(right_led1);
+    free(left_led2);
+    free(right_led2);
+    free(motor_IN1);
+    free(motor_IN2);
+    free(motor_EN);
+    free(lightsState);
+}
+
+void turnLedOnOff(GPIOPin * pin, int state){
+    gpio_result_t result = digitalWrite(pin, state ? HIGH : LOW);
+}
+
+void blinkIt(GPIOPin * pin, float freq, float duration){
+    pthread_t blink_thread_id1;
+    blink_params_t* params = malloc(sizeof(blink_params_t));
+    params->gpio = pin;
+    params->freq = freq;  // 0.5 Hz = blink cada 1 segundos
+    params->duration = duration;  // Durante 4 segundos
+
+    pthread_create(&blink_thread_id1, NULL, blink_thread, params);
+    pthread_detach(blink_thread_id1);  // No necesitamos esperar al thread
+}
+
+void lightsBackTogether(){
+    turnLedOnOff(left_led1, lightsState[0]);
+    turnLedOnOff(right_led1, lightsState[0]);
+    turnLedOnOff(left_led2, lightsState[1]);
+    turnLedOnOff(right_led2, lightsState[1]);
 }

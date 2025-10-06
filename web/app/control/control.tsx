@@ -316,7 +316,6 @@ export default function Control() {
                     <span>Traseras</span>
                   </Button>
                   <Button
-                    variant={controls.lights.leftTurn ? "secondary" : "outline"}
                     size="sm"
                     onClick={() => {toggleLight("leftTurn"); sendMessage("fi");}}
                     className="flex flex-col items-center gap-1 text-xs p-2 h-auto"
@@ -325,7 +324,7 @@ export default function Control() {
                     <span>Izq</span>
                   </Button>
                   <Button
-                    variant={controls.lights.rightTurn ? "secondary" : "outline"}
+                    
                     size="sm"
                     onClick={() => {toggleLight("rightTurn"); sendMessage("fd");}}
                     className="flex flex-col items-center gap-1 text-xs p-2 h-auto"

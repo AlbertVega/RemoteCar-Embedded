@@ -129,8 +129,8 @@ CMakeFiles/gpio_test.dir/clean:
 # Target rules for target CMakeFiles/control.dir
 
 # All Build rule for target.
-CMakeFiles/control.dir/all: lib/CMakeFiles/gpio.dir/all
 CMakeFiles/control.dir/all: lib/CMakeFiles/movement.dir/all
+CMakeFiles/control.dir/all: lib/CMakeFiles/gpio.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/control.dir/build.make CMakeFiles/control.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/control.dir/build.make CMakeFiles/control.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/libraries/build-arm/CMakeFiles --progress-num=3,4 "Built target control"
@@ -182,8 +182,8 @@ CMakeFiles/comms.dir/clean:
 # Target rules for target CMakeFiles/main.dir
 
 # All Build rule for target.
-CMakeFiles/main.dir/all: lib/CMakeFiles/gpio.dir/all
 CMakeFiles/main.dir/all: lib/CMakeFiles/movement.dir/all
+CMakeFiles/main.dir/all: lib/CMakeFiles/gpio.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/libraries/build-arm/CMakeFiles --progress-num=9,10 "Built target main"

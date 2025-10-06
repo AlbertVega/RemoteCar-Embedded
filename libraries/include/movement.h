@@ -43,3 +43,14 @@ int move_right();
 
 // Stop movement
 int stop();
+
+void changeLightState(char* lights);
+
+void freeThemAll();
+
+void turnLedOnOff(GPIOPin * pin, int state);
+
+void blinkIt(GPIOPin * pin, float freq, float duration);
+
+
+void lightsBackTogether();
