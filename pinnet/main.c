@@ -2,6 +2,29 @@
 #include <string.h>
 #include <signal.h>
 
+
+/**
+ * @brief Dirección del carro. 
+ * F: Está quieto
+ * w: Adelante
+ * a: Atrás
+ * s: Derecha
+ * d: Izquierda
+ */
+char * currDirection;
+/**
+ * @brief Velocidad del carro. 0 - 100
+ */
+int * currSpeed;
+/**
+ * @brief Arreglo con el estado de las cuatro luces.
+ * 0: Frontal derecha
+ * 1: Frontal izquierda
+ * 2: Trasera derecha
+ * 3: Trasera izquierda 
+ */
+int * lightsState; 
+
 /***
  * @brief Retorna la velocidad como entero
  * @param mess Puntero al string a numerar
@@ -18,31 +41,31 @@ int decodeSpeed(char * mess, int len){
     return speed;
 }
 
+void changeMove(char * command){
+    if(*command == 'F'){
+        printf("Stop\n");
+    }else{
+        printf("Command: %c\n",*command);
+    }
+}
+
 /**
- * @brief Ejecuta el comando recibido
+ * @brief Procesa el comando recibido
  * @param message Puntero del mensaje recibido
  * @param len Longitud del mensaje
  */
-void executeCommand(char * message, int len){
+void processCommand(char * message, int len){
     if(message[0] == 'v'){
         int speed = decodeSpeed(message, len);
-        printf("Speed: %d\n", speed);
+        if(speed != *currSpeed){
+            printf("Speed: %d\n", speed);
+            *currSpeed = speed;
+        }
     }else{
         if (len == 1){//Direcciones simples
-            if(message[0] == 'F'){
-                printf("PARA\n");
-            }
-            if(message[0] == 'w'){//Adelante
-                printf("Adelante\n");
-            }
-            if(message[0] == 's'){//Atrás
-                printf("Atrás\n");
-            }
-            if(message[0] == 'a'){//Izquierda
-                printf("Izquierda\n");
-            }
-            if(message[0] == 'd'){//Derecha
-                printf("Derecha\n");
+            if(message[0] != *currDirection){
+                *currDirection = message[0];
+                changeMove(currDirection);
             }
         }
         if(len == 2){//Faros
@@ -78,7 +101,7 @@ static int callback_echo(struct lws *wsi, enum lws_callback_reasons reason,
             printf("Client connected\n");
             break;
         case LWS_CALLBACK_RECEIVE:
-            executeCommand((char *)in, (int)len);
+            processCommand((char *)in, (int)len);
             lws_write(wsi, (unsigned char*)in, len, LWS_WRITE_TEXT);
             break;
         default:
@@ -93,6 +116,16 @@ static struct lws_protocols protocols[] = {
 };
 
 int main(void) {
+    //Seteo de valores del carro --------------
+    currDirection = (char *)malloc(sizeof(char));
+    *currDirection = 'F';
+    currSpeed = (int *)malloc(sizeof(int));
+    *currSpeed = 0;
+    lightsState = (int *)malloc(sizeof(int)*4);
+    for(int i = 0; i < 4; i++){
+        lightsState[i] = 0;
+    }
+    // ---------------------------
     struct lws_context_creation_info info;
     memset(&info, 0, sizeof(info));
     info.port = 2027;
@@ -113,5 +146,8 @@ int main(void) {
         lws_service(context, 1000);
     }
     lws_context_destroy(context);
+    free(currDirection);
+    free(currSpeed);
+    free(lightsState);
     return 0;
 }
