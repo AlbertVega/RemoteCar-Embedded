@@ -83,6 +83,8 @@ void processCommand(char * message, int len){
     
 }
 
+int * isRunning;
+
 /**
  * @brief Método para captación de eventos
  * @param wsi Puntero del socket
@@ -112,6 +114,36 @@ static struct lws_protocols protocols[] = {
     { NULL, NULL, 0, 0 }
 };
 
+/* PC
+gst-launch-1.0 udpsrc port=5000 caps="application/x-rtp, media=video, encoding-name=JPEG, payload=26" ! rtpjpegdepay ! jpegdec ! autovideosink
+
+
+
+*/
+
+
+/* PI
+gst-launch-1.0 v4l2src device=/dev/video0 ! \
+    image/jpeg,width=640,height=480,framerate=30/1 ! \
+    rtpjpegpay ! \
+    udpsink host=192.168.18.22 port=5000
+
+    # On Raspberry Pi
+
+    gst-launch-1.0 v4l2src device=/dev/video0 ! \
+    videoconvert ! jpegenc ! multipartmux ! \
+    host=0.0.0.0 port=8080
+
+
+*/
+
+void *streamCamera(void *arg){
+    system("gst-launch-1.0 v4l2src device=/dev/video0 ! \
+    image/jpeg,width=640,height=480,framerate=30/1 ! \
+    rtpjpegpay ! \
+    udpsink host=192.168.18.22 port=5000");
+}
+
 int main(void) {
     setup_defaults(); 
     //Seteo de valores del carro --------------
@@ -119,8 +151,23 @@ int main(void) {
     *currDirection = 'F';
     currSpeed = (int *)malloc(sizeof(int));
     *currSpeed = 0;
-    
+    isRunning = (int *)malloc(sizeof(int));
+    *isRunning = 1;
     // ---------------------------
+
+    //Cámara ------------------
+
+    pthread_t t_camera;
+    pthread_attr_t attr;
+    if (pthread_create(&t_camera, NULL, streamCamera, NULL) != 0) {
+        perror("pthread_create failed");
+    }
+    if (pthread_detach(t_camera) != 0) {
+        perror("pthread_detach failed");
+        // Handle error
+    }
+    // --------------------
+
     struct lws_context_creation_info info;
     memset(&info, 0, sizeof(info));
     info.port = 2027;
@@ -131,6 +178,7 @@ int main(void) {
     info.options = 0; 
     info.extensions = NULL; // Deshabilita el permessage-deflate
 
+
     struct lws_context *context = lws_create_context(&info);
     if (!context) {
         fprintf(stderr, "Failed to create context\n");
@@ -140,9 +188,11 @@ int main(void) {
     while (1) {
         lws_service(context, 1000);
     }
+    *isRunning = 0;
     lws_context_destroy(context);
     free(currDirection);
     free(currSpeed);
+    free(isRunning);
     freeThemAll();
     return 0;
 }

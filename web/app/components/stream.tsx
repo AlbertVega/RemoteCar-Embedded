@@ -36,6 +36,7 @@ export default function StreamViewer({ isConnected }: StreamProps) {
               <Camera className="w-16 h-16 mx-auto mb-4 animate-pulse" />
               <p className="text-lg font-mono">TRANSMISIÓN EN VIVO</p>
               <p className="text-sm">Cámara frontal del vehículo</p>
+              <img src="http://192.168.18.146:8080" alt="Camera feed" />
             </div>
 
             <div className="absolute top-4 left-4 space-y-2">
