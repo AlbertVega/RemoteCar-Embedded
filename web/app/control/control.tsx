@@ -86,7 +86,7 @@ export default function Control() {
 
   useEffect(() => {
     // Use the Pi’s IP on your LAN instead of localhost
-    const ws = new WebSocket("ws://localhost:2027");
+    const ws = new WebSocket("ws://192.168.18.146:2027");
 
     ws.onopen = () => console.log("Connected to Pi server");
     ws.onmessage = (msg) => setMessages((prev) => [...prev, msg.data]);

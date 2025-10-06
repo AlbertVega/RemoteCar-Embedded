@@ -1,7 +1,6 @@
 #include <libwebsockets.h>
 #include <string.h>
-#include <signal.h>
-
+#include <movement.h>
 
 /**
  * @brief Dirección del carro. 
@@ -45,7 +44,23 @@ void changeMove(char * command){
     if(*command == 'F'){
         printf("Stop\n");
     }else{
-        printf("Command: %c\n",*command);
+        switch (command) {
+            case 'w':
+                move_forward();
+                break;
+            case 's':
+                move_backward();
+                break;
+            case 'a':
+                move_left();
+                break;
+            case 'd':
+                move_right();
+                break;
+            case 'F':
+                stop();
+                break;
+        }
     }
 }
 
