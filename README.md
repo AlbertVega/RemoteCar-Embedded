@@ -130,4 +130,28 @@ entonces, el comando de connect sería:
 ```
 connect wifi_dcd645412fb_4g2hsdasdsmn_managed_psk
 ```
-11. Para verificar que la conexión ha sido exitosa, simplemente se volverá a emplear el comando `services`, y antes del nombre de la red, deberá aparecer las siglas `*AR` que significan que la red está lista, seleccionada y asociada al dispositivo. 
+11. Para verificar que la conexión ha sido exitosa, simplemente se volverá a emplear el comando `services`, y antes del nombre de la red, deberá aparecer las siglas `*AR` que significan que la red está lista, seleccionada y asociada al dispositivo.
+
+## Página web 
+1. Node.js y npm, para verificar si ya están instalados, ejecuta:
+```
+node -v
+npm -v
+```
+Si no están instalados, descárgalos desde https://nodejs.org/ según el sistema operativos que tengas. 
+
+2. Accede al directorio donde está ubicado el proyecto, abre dos terminales:
+```
+cd web
+cd auto-server
+```
+3.Instala las dependencias:
+```npm install```
+
+4.Para iniciar el servidor:
+Después de acceder a "auto-server" ingrese ```npm start```.
+
+5.Para iniciar la aplicación:
+Luego de acceder a "web", ingrese  ```npm run dev```. La página estará disponible en: http://localhost:3000
+
+
