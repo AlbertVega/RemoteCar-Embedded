@@ -474,6 +474,7 @@ int blink_left_lights() {
 int stop() {
     // Set flag to stop all blink threads
     stop_blink_flag = 1;
+    stop_pwm_flag = 1;
     
     // Wait a bit for threads to stop
     usleep(50000);  // Wait 50ms
@@ -486,6 +487,7 @@ int stop() {
     
     // Reset flag for future blinks
     stop_blink_flag = 0;
+    stop_pwm_flag = 0; 
     
     return result;
 }
