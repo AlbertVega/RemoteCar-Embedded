@@ -1,0 +1,8 @@
+[submodule "yocto_image/poky-scarthgap-5.0/poky/meta-openembedded"]
+	path = yocto_image/poky-scarthgap-5.0/poky/meta-openembedded
+	url = https://github.com/openembedded/meta-openembedded.git
+	branch = scarthgap
+[submodule "yocto_image/poky-scarthgap-5.0/poky/meta-raspberrypi"]
+	path = yocto_image/poky-scarthgap-5.0/poky/meta-raspberrypi
+	url = https://github.com/agherzan/meta-raspberrypi.git
+	branch = scarthgap
