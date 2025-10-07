@@ -1,0 +1,14 @@
+[Unit]
+Description= Auto (Node.js)
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/default/vehicle-server
+ExecStart=/usr/bin/node /opt/vehicle-server/dist/server.js
+WorkingDirectory=/opt/vehicle-server
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target
