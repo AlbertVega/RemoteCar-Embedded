@@ -228,7 +228,7 @@ export default function Control() {
               </div>
             </div>
             <Badge variant={isConnected ? "default" : "secondary"} className="px-2 py-1 text-xs">
-              {isConnected ? "🟢 CONECTADO" : "🔴 DESCONECTADO"}
+              STREAM
             </Badge>
           </div>
 
@@ -240,7 +240,7 @@ export default function Control() {
               size="sm"
             >
               <Power className="w-4 h-4 mr-1" />
-              {isConnected ? "DESCONECTAR" : "CONECTAR"}
+              STREAM
             </Button>
           </div>
         </div>
