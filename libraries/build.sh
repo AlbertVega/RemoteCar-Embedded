@@ -26,6 +26,7 @@ case "$1" in
         
         cmake -DCMAKE_TOOLCHAIN_FILE="$YOCTO_TOOLCHAIN" \
               -DCMAKE_BUILD_TYPE=Release \
+              -DLIBWEBSOCKETS_INCLUDE_DIR=/usr/lib/x86_64-linux-gnu \
               ..
               
         make -j$(nproc)

@@ -52,5 +52,11 @@ void turnLedOnOff(GPIOPin * pin, int state);
 
 void blinkIt(GPIOPin * pin, float freq, float duration);
 
+// Move with PWM
+int move_forward_pwm(int percentaje);
+int move_backward_pwm(int percentaje);
+int move_left_and_go(int percentaje);
+int move_right_and_go(int percentaje);
+
 
 void lightsBackTogether();

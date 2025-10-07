@@ -1,8 +1,8 @@
 lib/CMakeFiles/movement.dir/movement.c.o: \
- /home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/libraries/lib/movement.c \
+ /home/esteban/githubclone/4/RemoteCar-Embedded/libraries/lib/movement.c \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/stdc-predef.h \
- /home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/libraries/lib/../include/movement.h \
- /home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/libraries/lib/../include/gpio.h \
+ /home/esteban/githubclone/4/RemoteCar-Embedded/libraries/lib/../include/movement.h \
+ /home/esteban/githubclone/4/RemoteCar-Embedded/libraries/lib/../include/gpio.h \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/stdlib.h \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/bits/libc-header-start.h \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/features.h \

@@ -1,4 +1,4 @@
-// File: /home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/web/app/control/page.tsx
+// File: /home/esteban/githubclone/4/RemoteCar-Embedded/web/app/control/page.tsx
 import * as entry from '../../../../app/control/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

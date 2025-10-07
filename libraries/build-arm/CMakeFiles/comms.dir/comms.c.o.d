@@ -1,5 +1,5 @@
 CMakeFiles/comms.dir/comms.c.o: \
- /home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/libraries/comms.c \
+ /home/esteban/githubclone/4/RemoteCar-Embedded/libraries/comms.c \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/stdc-predef.h \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/libwebsockets.h \
  /opt/poky/5.0.12/sysroots/x86_64-pokysdk-linux/usr/lib/arm-poky-linux-gnueabi/gcc/arm-poky-linux-gnueabi/13.4.0/include/stdarg.h \

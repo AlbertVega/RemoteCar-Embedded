@@ -1,7 +1,7 @@
 CMakeFiles/gpio_test.dir/gpio_test.c.o: \
- /home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/libraries/gpio_test.c \
+ /home/esteban/githubclone/4/RemoteCar-Embedded/libraries/gpio_test.c \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/stdc-predef.h \
- /home/alexis/Documents/Tec/Empotrados/Proyecto_1/RemoteCar-Embedded/libraries/include/gpio.h \
+ /home/esteban/githubclone/4/RemoteCar-Embedded/libraries/include/gpio.h \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/stdio.h \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/bits/libc-header-start.h \
  /opt/poky/5.0.12/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/usr/include/features.h \

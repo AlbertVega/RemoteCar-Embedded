@@ -43,16 +43,16 @@ void changeMove(char * command){
         stop();
     }else{
         if(*command == 'w'){
-            move_forward();
+            move_forward_pwm(*currSpeed);
         }
         if(*command == 's'){
-            move_backward();
+            move_backward_pwm(*currSpeed);
         }
         if(*command == 'a'){
-            move_left();
+            move_left_and_go(*currSpeed);
         }
         if(*command == 'd'){
-            move_right();
+            move_right_and_go(*currSpeed);
         }
     }
 }
@@ -68,6 +68,7 @@ void processCommand(char * message, int len){
         if(speed != *currSpeed){
             printf("Speed: %d\n", speed);
             *currSpeed = speed;
+
         }
     }else{
         if (len == 1){//Direcciones simples
@@ -134,7 +135,7 @@ void *streamCamera(void *arg){
     system("gst-launch-1.0 v4l2src device=/dev/video0 ! \
     image/jpeg,width=640,height=480,framerate=30/1 ! \
     rtpjpegpay ! \
-    udpsink host=192.168.18.22 port=8080");
+    udpsink host=10.85.138.244 port=8080");
 }
 
 int main(void) {

@@ -5,6 +5,7 @@ cmake_minimum_required (VERSION 2.6)
 # No configurar compilador aquí, el toolchain lo maneja
 
 
+
 #define the project
 project (carcontrol)
 
@@ -24,6 +25,7 @@ add_executable(main main.c)
 #link against required libraries
 target_link_libraries(gpio_test gpio)
 target_link_libraries(control gpio movement)
+link_directories(/usr/lib/x86_64-linux-gnu)
 target_link_libraries(comms websockets)
 target_link_libraries(main websockets movement)
 
