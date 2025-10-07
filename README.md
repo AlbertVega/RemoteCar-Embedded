@@ -59,4 +59,25 @@ Y luego volver a ingresar el comando anterior del paso 2.
 
 6. Una vez conectado es hora de configurar el wifi, para esto se utilizará la herramienta connmanctl. Entonces ingresar el comando `connmanctl ....`
 7. 
+## Página web 
+1. Node.js y npm, para verificar si ya están instalados, ejecuta:
+```
+node -v
+npm -v
+```
+Si no están instalados, descárgalos desde https://nodejs.org/ según el sistema operativos que tengas. 
+
+2. Accede al directorio donde está ubicado el proyecto, abre dos terminales:
+```
+cd web
+cd auto-server
+```
+3.Instala las dependencias:
+```npm install```
+
+4.Para iniciar el servidor:
+Después de acceder a "auto-server" ingrese ```npm start```.
+
+5.Para iniciar la aplicación:
+Luego de acceder a "web", ingrese  ```npm run dev```. La página estará disponible en: http://localhost:3000
 
