@@ -13,8 +13,39 @@ git clone --recursive https://github.com/AlbertVega/RemoteCar-Embedded.git
 git submodule update --init --recursive
 ```
 
-
 ## Hardware
+
+Para la realización del hardware funcional es necesario tener ciertos componentes mínimos para el control de motores, luces de dirección, luces frontales, luces traseras, etc. Los componentes utilizados en este caso se describen acontinuación:
+#### Alimentación
+- Holders de baterías AA
+- 6 baterías AA 1.5V
+- Powerbank out 5V@1A (para alimentar la raspberry)
+- Switch (en caso se querer poder apagar y encender alimentación fácilmente)
+#### Motores
+- Puente H (en este caso el driver L298N)
+- 2 motores CD de 9V
+#### Luces
+- 2 LEDs blancos
+- 2 LEDs rojos
+- 4 Resistencias 1k Ohm
+#### Otros
+- Raspberry pi (raspberry pi 4 en este caso)
+- varios jumpers macho-hembra y macho-macho
+- Resistencias 1k Ohm por cada conexión GPIO de la raspberry
+- Webcam USB
+- Chasis del carrito donde montar todos los componentes (se recomienda tomar algún carrito viejo que tenga sistema de engranajes en las ruedas para acoplar fácilmente los motores)
+
+Acontinuación se muestra un diagrama de bloques que describe las conexiones entre componentes que es necesario hacer:
+<img width="945" height="624" alt="image" src="https://github.com/user-attachments/assets/a180eedb-2958-4a2d-9c11-ae0b8a0e358f" />
+
+Y en el siguiente diagrama se muestra como van las conexiones detalladamente entre cada componente:
+<img width="1251" height="763" alt="image" src="https://github.com/user-attachments/assets/34f76b40-7b0b-4565-b052-bdc2b5175204" />
+
+En la siguiente imagen se muestra el resultado final del carrito completamente ensamblado:
+![Imagen de WhatsApp 2025-10-07 a las 18 31 39_c410ca34](https://github.com/user-attachments/assets/de841c9f-c306-406c-9266-b8bbb7f389f6)
+
+
+
 
 ## Imagen de Yocto y herramienta de Cross-toolchain
 A continuación se detallan los pasos a seguir para generar la imagen y la herramienta de Cross-toolchain.
@@ -95,7 +126,7 @@ Y luego volver a ingresar el comando anterior del paso 2.
 
 <img width="819" height="127" alt="image" src="https://github.com/user-attachments/assets/f3014dfa-b146-4849-8610-93c3590a2704" />
 
-6. Una vez conectado es hora de configurar el wifi, para esto se utilizará la herramienta connmanctl. Entonces ingresar el comando `connmanctl ....`
+6. Una vez conectado es hora de configurar el wifi, para esto se utilizará la herramienta connmanctl. Entonces ingresar el comando `connmanctl`
 7. A continuación, se verifica la habilitación de la conexión utilizando el comando:
 ```
 enable wifi
@@ -118,7 +149,7 @@ Scan completed for wifi
     agent on
     ```
 Sin este comando, puede fallar el registro a una red debido a que no tiene como interactuar con el usuario para solicitar la contraseña. 
-11.Acto seguido, se realiza la conexión a la red, con el comando: 
+11. Acto seguido, se realiza la conexión a la red, con el comando: 
 ```
 connect wifi_<codigo_red>
 ```
@@ -145,10 +176,10 @@ Si no están instalados, descárgalos desde https://nodejs.org/ según el sistem
 cd web
 cd auto-server
 ```
-3.Instala las dependencias:
+3. Instala las dependencias:
 ```npm install```
 
-4.Para iniciar el servidor:
+4. Para iniciar el servidor:
 Después de acceder a "auto-server" ingrese ```npm start```.
 
 5.Para iniciar la aplicación:
